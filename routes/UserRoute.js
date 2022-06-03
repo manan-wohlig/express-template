@@ -1,7 +1,11 @@
-const { saveData } = require("../controller/UserController");
+const {
+  createUser,
+  login,
+  resetPassword,
+} = require("../controller/UserController");
 
 router.post(
-  "/saveData",
+  "/signup",
   ValidateRequest({
     body: {
       type: "object",
@@ -27,8 +31,59 @@ router.post(
   }),
   async (req, res) => {
     try {
-      let user = await saveData(req.body);
-      res.status(200).json(user);
+      let user = await createUser(req.body);
+      res.status(user.status).json(user);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+);
+
+router.post(
+  "/login",
+  ValidateRequest({
+    body: {
+      type: "object",
+      properties: {
+        email: {
+          type: "string",
+          format: "email",
+        },
+        password: {
+          type: "string",
+        },
+      },
+    },
+  }),
+  async (req, res) => {
+    try {
+      let user = await login(req.body);
+      res.status(user.status).json(user);
+    } catch (error) {
+      res.status(500).json(error);
+    }
+  }
+);
+
+router.post(
+  "/resetPassword",
+  ValidateRequest({
+    body: {
+      type: "object",
+      properties: {
+        password: {
+          type: "string",
+        },
+        newPassword: {
+          type: "string",
+        },
+      },
+    },
+  }),
+  async (req, res) => {
+    try {
+      let user = await resetPassword(req.body);
+      res.status(user.status).json(user);
     } catch (error) {
       res.status(500).json(error);
     }
